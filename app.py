@@ -9,6 +9,12 @@ import time
 from flask_cors import CORS
 import base64
 from utils import fetch_files_from_zip_variable
+from pathlib import Path
+from pathlib import Path
+
+
+
+from zipfile import ZipFile 
 
 load_dotenv()
 
@@ -62,17 +68,51 @@ def upload_image():
 
 @app.route('/upload_zip', methods=['POST'])
 def upload_zip():
-    if 'zip' not in request.files:
-        return jsonify({'error': 'No zip file uploaded'}), 400
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file part'})
 
-    zip_file = request.files['zip']
-    zip_data = zip_file.read()
+    file = request.files['file']
 
-    file_contents = fetch_files_from_zip_variable(zip_data)
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'})
 
-    zip_data.printdir()
+    if file and file.filename.endswith('.zip'):
 
-    return jsonify(file_contents), 200
+        uuid = str(uuid4())
+        file_name = uuid + file.filename
+        file_name = file_name.replace(" ", "_")
+        file.save(os.path.join('temp_files',file_name))
+        path = os.path.join('temp_files',file_name)
+        saved_file_path = os.path.join('temp_files',uuid)
+
+        with ZipFile(path, 'r') as zip: 
+            # printing all the contents of the zip file 
+            zip.printdir() 
+            # extracting all the files 
+            print('Extracting all the files now...') 
+            zip.extractall(saved_file_path) 
+            print('Done!') 
+
+
+        return jsonify({'message': 'File uploaded successfully'})
+    else:
+        return jsonify({'error': 'Invalid file format. Please upload a .zip file'})
+    
+
+
 
 if __name__ == '__main__':
+    Path("temp_files").mkdir(parents=True, exist_ok=True)
     app.run(debug=True,host='0.0.0.0',port=5000)
+
+    # if 'zip' not in request.files:
+    #     return jsonify({'error': 'No zip file uploaded'}), 400
+
+    # zip_file = request.files['zip']
+    # zip_data = zip_file.read()
+
+    # file_contents = fetch_files_from_zip_variable(zip_data)
+
+    # zip_data.printdir()
+
+    # return jsonify(file_contents), 200

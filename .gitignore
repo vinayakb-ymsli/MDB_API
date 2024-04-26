@@ -1,3 +1,9 @@
 venv
 .env
 temp_dir
+temp_files/82327c4b-65c6-4892-9efe-6bfbb5630012Input_Images.zip
+temp_files/82327c4b-65c6-4892-9efe-6bfbb5630012/Input Images/113.jpg
+temp_files/82327c4b-65c6-4892-9efe-6bfbb5630012/Input Images/114.jpg
+temp_files/82327c4b-65c6-4892-9efe-6bfbb5630012/Input Images/115.jpg
+__pycache__/utils.cpython-311.pyc
+__pycache__/utils.cpython-311.pyc
