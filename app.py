@@ -8,6 +8,7 @@ import requests
 import time
 from flask_cors import CORS
 import base64
+from utils import fetch_files_from_zip_variable
 
 load_dotenv()
 
@@ -20,9 +21,9 @@ BUCKET_NAME=os.getenv('BUCKET_NAME')
 CLOUDFRONT_URL=os.getenv('CLOUDFRONT_URL')
 FOLDER_NAME=os.getenv('FOLDER_NAME')
 
-@app.route('/', methods=['GET'])
-def home():
-    return 'Hello World!!!'
+# @app.route('/', methods=['GET'])
+# def home():
+#     return 'Hello World!!!'
 
 # Function to upload image to S3 bucket
 @app.route('/upload', methods=['POST'])
@@ -58,6 +59,20 @@ def upload_image():
     except Exception as e:
         return jsonify({'error': f'Error uploading image: {str(e)}'}), 500
 
+
+@app.route('/upload_zip', methods=['POST'])
+def upload_zip():
+    if 'zip' not in request.files:
+        return jsonify({'error': 'No zip file uploaded'}), 400
+
+    zip_file = request.files['zip']
+    zip_data = zip_file.read()
+
+    file_contents = fetch_files_from_zip_variable(zip_data)
+
+    zip_data.printdir()
+
+    return jsonify(file_contents), 200
+
 if __name__ == '__main__':
     app.run(debug=True,host='0.0.0.0',port=5000)
-
