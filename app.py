@@ -61,16 +61,21 @@ def upload_zip():
     if file and file.filename.endswith('.zip'):
         uuid = str(uuid4())
         file_name = file.filename #secure_filename(file.filename)
-        file.save(os.path.join('temp_files',file_name))
-        path = os.path.join('temp_files',file_name)
         saved_file_path = os.path.join('temp_files',uuid)
 
-        with ZipFile(path, 'r') as zip: 
+        if not os.path.exists(saved_file_path):
+            os.makedirs(saved_file_path)
+
+        zipfile_path = os.path.join(saved_file_path,file_name)
+        file.save(zipfile_path)
+        # path = os.path.join(saved_file_path,file_name.split('.')[0])
+
+
+        with ZipFile(zipfile_path, 'r') as zip: 
             zip.extractall(saved_file_path) 
 
         input_images_path = os.path.join(saved_file_path, file_name.split('.')[0])
 
-        # processed_images = []
         processed_images = {}
 
         for filename in os.listdir(input_images_path):
