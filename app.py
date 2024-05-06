@@ -19,11 +19,11 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)
 
-# ACCESS_KEY=os.getenv('ACCESS_KEY')
-# SECRET_KEY=os.getenv('SECRET_KEY')
-# BUCKET_NAME=os.getenv('BUCKET_NAME')
-# CLOUDFRONT_URL=os.getenv('CLOUDFRONT_URL')
-# FOLDER_NAME=os.getenv('FOLDER_NAME')
+ACCESS_KEY=os.getenv('ACCESS_KEY')
+SECRET_KEY=os.getenv('SECRET_KEY')
+BUCKET_NAME=os.getenv('BUCKET_NAME')
+CLOUDFRONT_URL=os.getenv('CLOUDFRONT_URL')
+FOLDER_NAME=os.getenv('FOLDER_NAME')
 
 
 image_details = {
@@ -46,6 +46,8 @@ def upload_image():
     image_file = request.files['image']
     filename = f"{uuid4()}.{image_file.filename.split('.')[-1]}"
 
+    s3_client = boto3.client('s3', aws_access_key_id=ACCESS_KEY, aws_secret_access_key=SECRET_KEY)
+    
     try:
         save_input_file_into_bucket(s3_client, image_file, filename)
         base64_output_image = fetch_output_file_from_bucket(filename)
@@ -65,6 +67,8 @@ def upload_zip():
 
     if file.filename == '':
         return jsonify({'error': 'No selected file'})
+
+    s3_client = boto3.client('s3', aws_access_key_id=ACCESS_KEY, aws_secret_access_key=SECRET_KEY)
 
     if file and file.filename.endswith('.zip'):
         uuid = str(uuid4())
@@ -105,10 +109,6 @@ def upload_zip():
 
 if __name__ == '__main__':
     Path("temp_files").mkdir(parents=True, exist_ok=True)
-    ACCESS_KEY=os.getenv('ACCESS_KEY')
-    SECRET_KEY=os.getenv('SECRET_KEY')
-    BUCKET_NAME=os.getenv('BUCKET_NAME')
-    CLOUDFRONT_URL=os.getenv('CLOUDFRONT_URL')
-    FOLDER_NAME=os.getenv('FOLDER_NAME')
-    s3_client = boto3.client('s3', aws_access_key_id=ACCESS_KEY, aws_secret_access_key=SECRET_KEY)
+
+    # s3_client = boto3.client('s3', aws_access_key_id=ACCESS_KEY, aws_secret_access_key=SECRET_KEY)
     app.run(debug=True,host='0.0.0.0',port=5000)
