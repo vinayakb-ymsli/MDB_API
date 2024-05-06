@@ -1,2 +1,6 @@
 venv
 .env
+temp_dir
+temp_files
+__pycache__/utils.cpython-311.pyc
+__pycache__/utils.cpython-311.pyc
