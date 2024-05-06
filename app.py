@@ -19,11 +19,11 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)
 
-ACCESS_KEY=os.getenv('ACCESS_KEY')
-SECRET_KEY=os.getenv('SECRET_KEY')
-BUCKET_NAME=os.getenv('BUCKET_NAME')
-CLOUDFRONT_URL=os.getenv('CLOUDFRONT_URL')
-FOLDER_NAME=os.getenv('FOLDER_NAME')
+# ACCESS_KEY=os.getenv('ACCESS_KEY')
+# SECRET_KEY=os.getenv('SECRET_KEY')
+# BUCKET_NAME=os.getenv('BUCKET_NAME')
+# CLOUDFRONT_URL=os.getenv('CLOUDFRONT_URL')
+# FOLDER_NAME=os.getenv('FOLDER_NAME')
 
 
 image_details = {
@@ -33,6 +33,9 @@ image_details = {
     'model_type': 'stardist'
 }
 
+@app.route('/', methods=['GET'])
+def HelloWorld():
+    return 'HELLO WORLD!'
 
 # Function to upload image to S3 bucket
 @app.route('/upload', methods=['POST'])
@@ -102,5 +105,10 @@ def upload_zip():
 
 if __name__ == '__main__':
     Path("temp_files").mkdir(parents=True, exist_ok=True)
+    ACCESS_KEY=os.getenv('ACCESS_KEY')
+    SECRET_KEY=os.getenv('SECRET_KEY')
+    BUCKET_NAME=os.getenv('BUCKET_NAME')
+    CLOUDFRONT_URL=os.getenv('CLOUDFRONT_URL')
+    FOLDER_NAME=os.getenv('FOLDER_NAME')
     s3_client = boto3.client('s3', aws_access_key_id=ACCESS_KEY, aws_secret_access_key=SECRET_KEY)
     app.run(debug=True,host='0.0.0.0',port=5000)
