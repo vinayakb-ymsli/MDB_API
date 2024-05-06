@@ -26,7 +26,12 @@ CLOUDFRONT_URL=os.getenv('CLOUDFRONT_URL')
 FOLDER_NAME=os.getenv('FOLDER_NAME')
 
 
-
+image_details = {
+    'image_dimensions': '1024 x 772',
+    'model_name': 'm1',
+    'model_upload_date': '2024-05-06',
+    'model_type': 'stardist'
+}
 
 
 # Function to upload image to S3 bucket
@@ -77,6 +82,7 @@ def upload_zip():
         input_images_path = os.path.join(saved_file_path, file_name.split('.')[0])
 
         processed_images = {}
+        original_images = {}
 
         for filename in os.listdir(input_images_path):
             file_path = os.path.join(input_images_path, filename)
@@ -87,7 +93,8 @@ def upload_zip():
             # processed_image_with_filename = {filename.split('.')[0]: processed_image_base64}
             # processed_images.append(processed_image_with_filename)
             processed_images[filename.split('.')[0]] = processed_image_base64
-        return jsonify({'images': processed_images})
+            original_images[filename.split('.')[0]] = base64.b64encode(open(os.path.join(input_images_path, filename), 'rb').read()).decode('utf-8')
+        return jsonify({'processed_images': processed_images, 'original_images': original_images, 'image_details': image_details})
     else:
         return jsonify({'error': 'Invalid file format. Please upload a .zip file'})
 
